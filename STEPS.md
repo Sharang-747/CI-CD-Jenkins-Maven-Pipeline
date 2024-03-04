@@ -91,11 +91,20 @@ pwd
 ```
 - We have got the path copy the path and proceed for the next step.
 
-### **Step #5: **Configuring Jenkins and Installing Maven**
-- Now in Jenkins window set the number of executioners to '2' or according to your need and paste the path which we have copied from the current working directory in previous Step:4.
+### **Step #5: **Configuring Jenkins_slave_Node**
+- Now in Jenkins window set the number of executioners to '2' or according to your need and paste the path which we have copied from the current working directory in previous **Step:4.**
 - As we know when we run the job Jenkins copy all the files and folders to its workspace. So after giving the path of remote root directory jenkins will go the given path and the directory will act as a jenkins workspace.
--  
-
+- Now scroll down and select launch method as launch Agent via SSH.
+- Now we have to enter Public IP of out master node in the Host section for that navigate back to EC2 Console select the **Jenkins_Master** instance and under the instance there will be a panel in which we will find our Public IP address of our instance.
+- We do this as Jenkins_master node will control the slave node.
+- For connection of slave node to master node jenkins needs id and password , So to add the credentials click on add credentials and Select SSH username with private key option.
+- As we have launched our instances in AWS, AWS provides a username(ec2-user) and password in the form of a key.
+- The key was downloaded when we first launched our **Jenkins_Master** instance.
+- Enter the username as ec2-user and then select the 'Enter directly' option.
+- Copy the contents of the key which we have downloaded it will be in the downloads folder in our machine open the file using notepad or any other editor copy the contents and paste it inside the 'Enter directly' option and then click on add.
+- In the host key verification strategy select Non Verifying verification strategy, so while ssh login it won't ask for Yes/No permissions.
+- Now we have successfully configured the slaveNode click on slave node and it will be launched.
+- **Note :- You need to have installed java-openjdk11 in your both master and slave instances before launching the agent.**
 
 ### **Additional Commands**
 - If you want to check docker container than we can run a shell inside container by typing `docker container exec -it control_cursor bash`.
