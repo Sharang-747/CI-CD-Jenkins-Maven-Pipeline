@@ -104,7 +104,7 @@ pwd
 - Copy the contents of the key which we have downloaded it will be in the downloads folder in our machine open the file using notepad or any other editor copy the contents and paste it inside the 'Enter directly' option and then click on add.
 - In the host key verification strategy select Non Verifying verification strategy, so while ssh login it won't ask for Yes/No permissions.
 - Now we have successfully configured the slaveNode click on slave node and it will be launched.
-- **Note :- You need to have installed java-openjdk11 in your both master and slave instances before launching the agent.**
+- **Note :- You need to have installed java-openjdk11 in your both master and slave instances before launching the agent, You can follow previous steps on how to install java-openjdk11.**
 
 ### **Additional Commands**
 - If you want to check docker container than we can run a shell inside container by typing `docker container exec -it control_cursor bash`.
