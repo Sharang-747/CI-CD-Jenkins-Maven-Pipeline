@@ -63,54 +63,39 @@ sudo service jenkins start
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 - The above url /var/lib/jenkins/secrets/initialAdminPassword was copied from the jenkins window open in the browser preceding it with `sudo` and `cat` command.
-- After entering the command you will get the password on the Instance Connect console copy it and paste it in the browser's window tab and the click on continue button
-- 
+- After entering the command you will get the password on the Instance Connect console copy it and paste it in the browser's window tab and the click on continue button.
+- After this it will show you options to `Install suggested plugins` or `Select plugins to install` we select `Install suggested plugins` option and will start downloading the plugins, we will wait for sometime let the plugins be installed.
+- After the plugins are installed it will tell us to create our `Username`, `Password`, `Full name` and `E-mail address` you can enter the details and then click on `Save and Continue` option to continue.
+- You have successfully installed jenkins in your system.
 
-  
-### **Step #3: Create Docker file with Nginx Configurations**
-- Now we initiate Docker by typing command `docker run hello-world` and then hit `Enter` it will show that docker is successfully installed.
-- After installing we create Docker File using `vi Dockerfile` command in that we paste the below shell script.
+### **Step #3: Configuring Jenkins to create our Pipeline**
+- Now you can see our Jenkins window is open in that click on Manage Jenkins.
+- In that click on Node tab and select it. In this step, we are setting up the Slave Node in Jenkins. It is not a good practice to run your jobs on the master node.
+- After clicking on Node Tab click on New Node.
+- Give a name according to your preference here i have given **Jenkins_slave_node** and select Permanent Agent and click on create.
 
+### **Step #4: To launch another Instance**
+- We now go back to our EC2 console to launch another instance we name the instance as **Jenkins_slaveNode** and attack the same key pair and security group we attached for the **Jenkins_Master** instance and launch the instance.
+- Now connect the Instance using EC2 Instance Connect as we did for the **Jenkins_Master** instance and create a directory using the following command :-
 ```
-FROM nginx:latest
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install wget unzip -y
-WORKDIR /usr/share/nginx/html
-COPY default.conf /etc/nginx/sites-enabled/
-ADD https://bootstrapmade.com/content/templatefiles/Ninestars/Ninestars.zip .
-RUN unzip Ninestars.zip
-RUN mv Ninestars/* .
-RUN rm -rf Ninestars Ninestars.zip
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+mkdir jenkinaws
 ```
-
-- After the pasting the above code we hit `Esc` button to get into command mode and then type `:wq` to write and save the file.
-- Now we create another file using `vi` command and name it as `vi default.conf` file because the `Dockerfile` is going to copy files to `/etc/nginx/sites-enabled/` this location.
-- In the `default.conf` file we paste the code below.
-
+- We are creating this directory as we need its path to configure our **Jenkins_slave_node** in jenkins.
+- Now we change the directory using :-
 ```
-server {
-        listen 80 default_server;
-        root /usr/share/nginx/html;
-        index index.html;
-        server_name mysite.com;
-}
+cd jenkinaws
 ```
+- To copy the path of the current working directory enter the following command :-
+```
+pwd
+```
+- We have got the path copy the path and proceed for the next step.
 
-- After the pasting the above code we hit `Esc` button to get into command mode and then type `:wq` to write and save the file.
-- If we use `ls` command which is used to list the files in that directory we can see the `Dockerfile` and `default.conf` files are present in that directory.
+### **Step #5: **Configuring Jenkins and Installing Maven**
+- Now in Jenkins window set the number of executioners to '2' or according to your need and paste the path which we have copied from the current working directory in previous Step:4.
+- As we know when we run the job Jenkins copy all the files and folders to its workspace. So after giving the path of remote root directory jenkins will go the given path and the directory will act as a jenkins workspace.
+-  
 
-### **Step #4: Create Docker Image and Docker Container**
-- To create Docker Image we use command `docker build -t testimg:v1 .` and it will create an testimg for us this process will take few seconds.
-- If you want to see whether the Docker Image is created you can type `docker images` to check for image.
-- Now we create Docker Container by typing `docker run --rm -d -p 80:80 testimg:v1` in this command we are mapping port 80 to 80 and also using `--rm` to delete the container immediately after it stops running.
-- If we type `docker ps` command we can see that our container is running and port 80 is exposed.
-
-### **Step #5: **Deploying the Static Website**
-- Now we go back to our EC2 Console and click on our instance in our instance details there will be `Public IPv4 DNS` copy that address.
-- After copying paste that DNS address which looks like this (http://ec2-54-234-124-243.compute-1.amazonaws.com/) in new tab of your browser you can see your static website is running.
-- #### Your Project is Complete.
 
 ### **Additional Commands**
 - If you want to check docker container than we can run a shell inside container by typing `docker container exec -it control_cursor bash`.
@@ -118,6 +103,8 @@ server {
 - We have entered into the shell inside container now we use `ls` command we will see all the files of our website listed.
 - You can also check for Nginx status by typing `service nginx status` it will show you the output as nginx is running.
 - Now you can exit the shell inside container by using `exit` command. 
+
+- #### Your Project is Complete.
 
 ### **Project Completion Time**
 - Approximately 15-20 minutes.
