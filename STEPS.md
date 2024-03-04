@@ -1,45 +1,72 @@
-# **Static Website on AWS EC2 using Nginx & Docker Containers**
+# **CI/CD Pipeline using Jenkins & Maven**
 
-In this project, you'll learn how to create a Static Website using Amazon EC2 service, how to ssh into EC2 Instance & how to create Docker Containers and Docker Image with Nginx Configurations. 
+In this project, you'll learn how to ssh into EC2 Amazon Linux instance how to install Jenkins & Maven and how to create job to create a CI/CD pipeline. 
 
 ### **Step #1: To Create an EC2 Instance**
 - To create an instance first navigate using aws management console and click on EC2 service.
-- After then click on launch instance and name the instance as **staticwbinstance** (you can name the instance as per your choice as well).
-- You have to select ubuntu AMI image for this project.
-- We have to create a Key Pair in the key pair tab, Click on Create new key pair and name the key pair as **testkeystaticwb** selct the .pem option because we are going to ssh into that instance using CLI and the creat new key pair option after clicking the keypair will be downloaded into your machine downloads folder.
-- We now create a new Security Group name it as **StaticwbGroup** in the description type **Allow port 80 and 22** now will add the inbond rules to allow HTTP(Port 80) and SSH(Port 22) traffic from Anywhere on IPV4 traffic by selecting the Add rule in the inbound rules tab and then we will create the Security Group.
+- After then click on launch instance and name the instance as **Jenkins_Master** (you can name the instance as per your choice as well).
+- You have to select Amazon AMI image for this project.
+- We have to create a Key Pair in the key pair tab, Click on Create new key pair and name the key pair as **Jenkins_Key** selct the .pem option because we are going to ssh into that instance using EC2 Instance Connect and then create new key pair option after clicking the keypair will be downloaded into your machine downloads folder.
+- We now create a new Security Group name it as **Jenkins_SG** in the description type **Allow port 8080** now will add the inbond rules to allow HTTP(Port 80), SSH(Port 22), HTTPS(Port 443) and Port 8080 to allow traffic from Anywhere on IPV4 traffic by selecting the Add rule in the inbound rules tab and then we will create the Security Group.
 -Configure the storage setting and set 20GiB as storage.
-- Now we have successfully created the key pair and configured the Security Group for our EC2 Instance now we paste the Shell Script File in the Advanced Details Section where a big textbox appears in that paste the below code.
+- Now we have successfully created the key pair and configured the Security Group for our EC2 Instance now we can launch our EC2 Intance.
+- **Note :- It is important to allow Port 8080 because Jenkins uses Port 8080 for its services.**
 
+### **Step #2: SSH into EC2 Instance(Jenkins_Master) and Install Jenkins and Java-JDK11**
+- After the Instance is launched and running we will ssh into the EC2 Instance using EC2 Instance Connect by selecting the running instance and then clicking on connect button.
+- After clicking on connect we will be under a EC2 Instance Connect tab under that tab there is yellow connect button click on it to connect to EC2 instance Connect.
+- A new tab will be opened wait for few seconds to load the terminal.
+- As the terminal is loaded we enter following command to get started with the installation process :-
 ```
-#!/bin/bash
-sudo apt-get update -y
-sudo apt-get install wget curl git vim ca-certificates gnupg lsb-release -y
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update -y
-sudo apt-cache policy docker-ce
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
-sudo usermod -aG docker <USERNAME>
-sudo sudo systemctl start docker
-sudo sudo enable start docker
-sudo wget https://github.com/docker/compose/releases/download/v2.14.0/docker-compose-linux-x86_64 -O /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 ```
+- After entering hit `Enter` above command is to create a repository of jenkins after this we enter the following command :-
+```
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+```
+- The above command will import the key or rather add the key.
+- Next is to install javaOpenJdk11 on the instance running Amazon Linux AMI the command for it is as follows :-
+```
+sudo yum install java-11-amazon-corretto -y
+```
+- After entering the command hit `Enter` and there will be a prompt in the installing telling you to enter `[Y/n]` enter `Y` means yes to continue with the installation.
+- After installation is done we can check whether java is installed by simply typing :-
+```
+java -version
+```
+- The above command will show us the output as displaying the java version (i.e 11).
+- **Note :- We have specifically installed java version 11 because jenkins needs java 11, java 17 or java 21 for its installation.**
+- Now its time to install Jenkins by using the following command :-
+```
+sudo yum install jenkins
+```
+- Hit `Enter` after typing the command it will again show you a prompt then type `y` and `Enter` key to begin with the installation.
+- After Jenkins is installed you can verify its installation by typing which will show you the version which is installed on the instance:-
+```
+jenkins -version
+```
+- To check for Jenkins Status you can type :-
+```
+sudo service jenkins status
+```
+- Which will show you that the service is inactive.
+- To start the service we can type :-
+```
+sudo service jenkins start
+```
+- After typing and hitting `Enter` we will have to wait for few seconds for the service to start.
+- When the service is started it will show `"OK"` that the service has begun and it will return the prompt input.
+- Again we can check our status by running the above `sudo service jenkins status` and it will show that it is `active (running).` and your jenkins is up and running.
+- **Note :- Before further processing please make sure that your EC2 instance security group has an inbound rule which allows port 8080 for jenkins to access the port.**
+- Now we will take our EC2 instance public IP address and copy it and paste it in the browser's new tab and with that we will type our jenkins port which is 8080 for example `56.171.188.90:8080` and then hit `Enter` you will see a window which tells you enter `initialAdminPassword` to get that password we type the following command in our EC2 Instance Connect console :-
+```
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+- The above url /var/lib/jenkins/secrets/initialAdminPassword was copied from the jenkins window open in the browser preceding it with `sudo` and `cat` command.
+- After entering the command you will get the password on the Instance Connect console copy it and paste it in the browser's window tab and the click on continue button
+- 
 
-- Then create the instance.
-- **Note :- We have to change the username where it is highlighted as <USERNAME> to ubuntu as we are using ubuntu AMI Image.**
-
-### **Step #2: SSH into EC2 Instance**
-- After the Instance is launched and up and running we will ssh into the instance using command prompt of windows machine if you are using MacOS/Linux machine you will make use of Terminal or Linux shell accordingly.
-- Before we ssh into our instance first we download our static website files from clicking on the link (https://bootstrapmade.com/ninestars-free-bootstrap-3-theme-for-creative/#download) and click on download which will download the ninestars website into our downloads folder.
-- After this open command prompt change directory to Downloads using `cd Downloads` command which will change the directory.
-- In our Downloads directory we have our website files now we can ssh into our instance by clicking on our instance and then by clicking on connect button then on SSH Client tab we will see ssh command which goes as `ssh -i "testkeystaticwb.pem" ubuntu@ec2-54-234-124-243.compute-1.amazonaws.com` the key name and the IP. address mentioned here will be different for every instance created.
-- and the paste the command in the command prompt and hit `Enter`.
-- It will ask you with a prompt whether you want to connect or not type yes and then hit `Enter`.
-- You have successfully ssh'ed into your instance as you can see the prompt has been changed.  
-
+  
 ### **Step #3: Create Docker file with Nginx Configurations**
 - Now we initiate Docker by typing command `docker run hello-world` and then hit `Enter` it will show that docker is successfully installed.
 - After installing we create Docker File using `vi Dockerfile` command in that we paste the below shell script.
