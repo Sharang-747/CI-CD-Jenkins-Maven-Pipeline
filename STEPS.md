@@ -91,7 +91,7 @@ pwd
 ```
 - We have got the path copy the path and proceed for the next step.
 
-### **Step #5: **Configuring Jenkins_slave_Node**
+### **Step #5: Configuring Jenkins_slave_Node**
 - Now in Jenkins window set the number of executioners to '2' or according to your need and paste the path which we have copied from the current working directory in previous **Step:4.**
 - As we know when we run the job Jenkins copy all the files and folders to its workspace. So after giving the path of remote root directory jenkins will go the given path and the directory will act as a jenkins workspace.
 - Now scroll down and select launch method as launch Agent via SSH.
@@ -106,15 +106,48 @@ pwd
 - Now we have successfully configured the slaveNode click on slave node and it will be launched.
 - **Note :- You need to have installed java-openjdk11 in your both master and slave instances before launching the agent, You can follow previous steps on how to install java-openjdk11.**
 
-### **Additional Commands**
-- If you want to check docker container than we can run a shell inside container by typing `docker container exec -it control_cursor bash`.
-- In the above command `control_damage` is an random name of the container created in your case it will be different.
-- We have entered into the shell inside container now we use `ls` command we will see all the files of our website listed.
-- You can also check for Nginx status by typing `service nginx status` it will show you the output as nginx is running.
-- Now you can exit the shell inside container by using `exit` command. 
+### **Step #6: Installing Maven**
+- We are using maven as buiding and testing tool. so to install maven in your system enter the following command on your slave node(i.e **Jenkins_slaveNode** instance).
+- To install Maven we have to go to the root directory by typing :-
+```
+sudo su - root
+```
+- After entering the root directory we type :-
+```
+yum install maven -y
+```
+-You can check with the following command to check maven is installed or not :-
+```
+mvn -version
+```
+- Your maven is now installed.
+
+### **Step #7: Installing Plugin in Jenkins for Maven**
+- Go the Jenkins window in that go to Manage Jenkins tab in that select Plugins.
+- Click on Available Plugins and search for `Maven Integration` and install it.
+- Once it is downloaded click on Restart Jenkins option.
+
+### **Step #8: Creating a Job in Jenkins**
+- After Jenkins is restarted go to the dashboard section and click on `New item` to create a job
+- Give name as Jenkins-maven-job and select freestyle project.
+- Copy the url of your Git-Hub Repository in which you have cloned the project in my case https://github.com/Sharang-747/CI-CD-Jenkins-Maven-Pipeline.git
+- Click on GitHub Project and paste the copied GitHub Repository url.
+- Click on `Restrict where this project can be run` option and select Jenkins_slave_node, This option will restrict to run the job on particular node entered in the box.
+- As we are using the Source Code management as GitHub so click on Git and enter theurl of the same repository, You don’t need to add credentials because we are using public repo, we can add the credentials if the repo is private.
+- Scroll down and click on the Poll SCM and enter * * * * * . Which means jenkins will run the job every minute automatically.
+- Click on build steps and select Invoke top-level maven targets.
+- Enter the following command in Goal sections :-
+```
+clear package
+```
+- After typing then save the Job.
+- Now scroll down and click on Post build action and select archive the artifacts and enter the following line, It will copy the .jar file into the master node.
+- Before saving the file type `target/*.jar`
+- And save the Job. 
+- Click on Build now.
 
 - #### Your Project is Complete.
 
 ### **Project Completion Time**
-- Approximately 15-20 minutes.
+- Approximately 1 Hour.
 
