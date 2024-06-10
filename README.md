@@ -1,6 +1,6 @@
 # CI/CD-Jenkins-Maven-Pipeline
 
-- ### Provisioned and configured a multi-node Jenkins server infrastructure on AWS EC2 :
+- ### **Provisioned and configured a multi-node Jenkins server infrastructure on AWS EC2 :**
   - Established a secure master node accessible on port 8080.
   - Added a slave node for efficient job distribution and best practices.
 - ### Integrated Jenkins with Maven for automated build and test execution :
