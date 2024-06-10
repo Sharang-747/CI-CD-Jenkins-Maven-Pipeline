@@ -1,5 +1,4 @@
 # CI/CD-Jenkins-Maven-Pipeline
-
 - Created Amazon EC2 Linux Instance and SSH'ed into it.
 - Installed Jenkins on EC2 Instance.
 - Installed Maven on instance.
