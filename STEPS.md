@@ -1,6 +1,6 @@
 # **CI/CD Pipeline using Jenkins & Maven**
 
-In this project, you'll learn how to ssh into EC2 Amazon Linux instance how to install Jenkins & Maven and how to create job to create a CI/CD pipeline. 
+In this project, you'll learn how to ssh into EC2 Amazon Linux instance how to install Jenkins & Maven and how to create a job to make a CI/CD pipeline. 
 
 ### **Step #1: To Create an EC2 Instance**
 - To create an instance first navigate using aws management console and click on EC2 service.
